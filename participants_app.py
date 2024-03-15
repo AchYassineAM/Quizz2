@@ -8,7 +8,7 @@ def participants_tab():
     df = pd.read_excel(file_path)
 
     # Créer un DataFrame temporaire pour stocker les scores et les chronomètres
-    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre_minutes", "Chronomètre_seconds"])
+    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre_minutes", "Chronomètre_seconds", "Chronomètre_milliseconds"])
 
     # Afficher l'image
     st.image("palliers.png", use_column_width=True)
@@ -34,6 +34,7 @@ def participants_tab():
             chronometer_input = minutes_input * 60 + seconds_input + milliseconds_input / 1000
             scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
             scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
+            scores_df.loc[index, "Chronomètre_milliseconds"] = milliseconds_input
 
             
 
