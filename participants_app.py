@@ -30,7 +30,8 @@ def participants_tab():
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
             minutes_input = st.number_input("Minutes", key=f"chronometer_minutes_{index}", value=scores_df.loc[index, "Chronomètre_minutes"] if not pd.isna(scores_df.loc[index, "Chronomètre_minutes"]) else 0)
             seconds_input = st.number_input("Secondes", key=f"chronometer_seconds_{index}", value=scores_df.loc[index, "Chronomètre_seconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_seconds"]) else 0, min_value=0, max_value=59, step=1)
-            chronometer_input = minutes_input + seconds_input / 60
+            milliseconds_input = st.number_input("Millisecondes", key=f"chronometer_milliseconds_{index}", value=scores_df.loc[index, "Chronomètre_milliseconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_milliseconds"]) else 0, min_value=0, max_value=999, step=1)
+            chronometer_input = minutes_input * 60 + seconds_input + milliseconds_input / 1000
             scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
             scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
 
