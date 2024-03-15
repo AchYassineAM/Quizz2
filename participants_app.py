@@ -33,15 +33,9 @@ def participants_tab():
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            minutes_input = st.number_input("Minutes", key=f"minutes_{index}", value=scores_df.loc[index, "Minutes"] if not pd.isna(scores_df.loc[index, "Minutes"]) else 0)
-            seconds_input = st.number_input("Secondes", key=f"seconds_{index}", value=scores_df.loc[index, "Secondes"] if not pd.isna(scores_df.loc[index, "Secondes"]) else 0, min_value=0, max_value=59, step=1)
-            milliseconds_input = st.number_input("Millisecondes", key=f"milliseconds_{index}", value=scores_df.loc[index, "Milliseconds"] if not pd.isna(scores_df.loc[index, "Milliseconds"]) else 0, min_value=0, max_value=999, step=1)
-            total_time = minutes_input * 60000 + seconds_input * 1000 + milliseconds_input
+            total_time_input = st.text_input("Temps total (mm:ss.SSS)", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else "00:00.000")
             scores_df.loc[index, "Score"] = score_input
-            scores_df.loc[index, "Temps_total"] = total_time
-
-    # Ajouter une colonne Temps_total_format pour afficher le temps total dans le format souhaité
-    filtered_df['Temps_total_format'] = filtered_df['Temps_total'].apply(lambda x: pd.to_datetime(x, unit='ms').strftime('%M:%S.%f')[:-3])
+            scores_df.loc[index, "Temps_total"] = total_time_input
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
@@ -55,7 +49,7 @@ def participants_tab():
         st.write(f"Palier: {selected_row['PALIER']}")
         st.write(f"Tente: {selected_row['TENTE']}")
         st.write(f"Score: {selected_row['Score']}")
-        st.write(f"Temps total: {selected_row['Temps_total_format']}")
+        st.write(f"Temps total: {selected_row['Temps_total']}")
 
     # Bouton de téléchargement du fichier CSV
     st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
