@@ -33,9 +33,10 @@ def participants_tab():
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            total_time_input = st.text_input("Temps total (mm:ss.SSS)", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else "00:00.000")
-            scores_df.loc[index, "Score"] = score_input
-            scores_df.loc[index, "Temps_total"] = total_time_input
+            total_time_input = st.time_input("Temps total", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else None)
+            if total_time_input is not None:
+                total_time_str = f"{total_time_input.hour:02d}:{total_time_input.minute:02d}:{total_time_input.second:02d}"
+                scores_df.loc[index, "Temps_total"] = total_time_str
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
