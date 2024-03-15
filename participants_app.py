@@ -58,6 +58,16 @@ def participants_tab():
         download_link = create_download_link(details_df, file_type='csv', file_name='resultats_participants.csv')
         st.markdown(download_link, unsafe_allow_html=True)
 
+    # Ajouter le menu des onglets dans la sidebar
+        st.sidebar.title("Menu des onglets")
+        app_mode = st.sidebar.radio("Navigation", ["Accueil", "Participants"])
+        if app_mode == "Accueil":
+            # Insérez ici le contenu de votre onglet principal
+            pass
+        elif app_mode == "Participants":
+            # Afficher l'onglet des participants
+            participants_tab()
+
 def create_download_link(df, file_type, file_name):
     if file_type == 'csv':
         csv = df.to_csv(index=False)
