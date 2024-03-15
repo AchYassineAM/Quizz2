@@ -17,10 +17,15 @@ def participants_tab():
     with st.sidebar:
         st.title("Filtres")
         search_term = st.text_input("Rechercher par nom/prénom", "")
-        group_filter = st.selectbox("Filtrer par groupe", df['GROUPE'].unique())
+        unique_groups = ['Tous'] + df['GROUPE'].unique().tolist()  # Ajouter 'Tous' à la liste des groupes uniques
+        group_filter = st.selectbox("Filtrer par groupe", unique_groups)
 
     # Filtrer les données en fonction des filtres sélectionnés
-    filtered_df = df[(df['GROUPE'] == group_filter)]
+    if group_filter == 'Tous':
+        filtered_df = df
+    else:
+        filtered_df = df[df['GROUPE'] == group_filter]
+
     if search_term:
         filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['NOM'].lower() or search_term.lower() in row['PRENOM'].lower(), axis=1)]
 
@@ -35,8 +40,6 @@ def participants_tab():
             scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
             scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
             scores_df.loc[index, "Chronomètre_milliseconds"] = milliseconds_input
-
-            
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
@@ -66,4 +69,4 @@ def create_download_link(df, file_type, file_name):
         href = f'<a href="data:file/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
     elif file_type == 'xlsx':
         xlsx = df.to_excel(index=False)
-        b64 = base64.b64encode(xlsx).decode
+        b64 = base64.b64encode(xlsx
