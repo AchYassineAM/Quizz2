@@ -8,7 +8,7 @@ def participants_tab():
     df = pd.read_excel(file_path)
 
     # Créer un DataFrame temporaire pour stocker les scores et les chronomètres
-    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre"])
+   scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre_minutes", "Chronomètre_seconds"])
 
     # Afficher l'image
     st.image("palliers.png", use_column_width=True)
@@ -28,9 +28,13 @@ def participants_tab():
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            chronometer_input = st.number_input("Chronomètre (en minutes)", key=f"chronometer_{index}", value=scores_df.loc[index, "Chronomètre"] if not pd.isna(scores_df.loc[index, "Chronomètre"]) else 0)
-            scores_df.loc[index, "Score"] = score_input
-            scores_df.loc[index, "Chronomètre"] = chronometer_input
+            minutes_input = st.number_input("Minutes", key=f"chronometer_minutes_{index}", value=scores_df.loc[index, "Chronomètre_minutes"] if not pd.isna(scores_df.loc[index, "Chronomètre_minutes"]) else 0)
+                seconds_input = st.number_input("Secondes", key=f"chronometer_seconds_{index}", value=scores_df.loc[index, "Chronomètre_seconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_seconds"]) else 0, min_value=0, max_value=59, step=1)
+                chronometer_input = minutes_input + seconds_input / 60
+            scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
+            scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
+
+            
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
