@@ -18,7 +18,6 @@ def participants_tab():
         st.title("Filtres")
         search_term = st.text_input("Rechercher par nom/prénom", "")
         group_filter = st.selectbox("Filtrer par groupe", df['GROUPE'].unique())
-        tente_filter = st.selectbox("Filtrer par tente", df['TENTE'].unique())
 
     # Filtrer les données en fonction des filtres sélectionnés
     filtered_df = df[(df['GROUPE'] == group_filter) & (df['TENTE'] == tente_filter)]
@@ -35,7 +34,7 @@ def participants_tab():
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
-    selected_index = st.radio("Sélectionner un participant :", filtered_df.index)
+    clicked_index = st.write(filtered_df)
 
     if clicked_index is not None:
         selected_row = filtered_df.iloc[clicked_index]
