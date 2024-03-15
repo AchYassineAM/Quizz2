@@ -33,10 +33,17 @@ def participants_tab():
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            total_time_input = st.time_input("Temps total", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else None)
-            if total_time_input is not None:
-                total_time_str = f"{total_time_input.hour:02d}:{total_time_input.minute:02d}:{total_time_input.second:02d}"
-                scores_df.loc[index, "Temps_total"] = total_time_str
+            total_time_input = st.text_input("Temps total (mm:ss:SSS)", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else "")
+            if total_time_input:
+                # Vérifier si le format du temps est valide
+                try:
+                    minutes, seconds, milliseconds = map(int, total_time_input.split(":"))
+                    if len(total_time_input.split(":")) != 3 or seconds >= 60 or milliseconds >= 1000:
+                        raise ValueError
+                    total_time_str = f"{minutes:02d}:{seconds:02d}:{milliseconds:03d}"
+                    scores_df.loc[index, "Temps_total"] = total_time_str
+                except ValueError:
+                    st.warning("Veuillez saisir un temps valide au format mm:ss:SSS")
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
