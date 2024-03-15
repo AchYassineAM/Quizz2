@@ -1,57 +1,66 @@
 import streamlit as st
 import pandas as pd
-from participants_app import participants_tab
+import base64
 
-# Charger le fichier Excel contenant les 99 questions et réponses
-file_path = "99Questions.xlsx"
-df = pd.read_excel(file_path)
+def participants_tab():
+    # Charger le fichier Excel contenant les participants
+    file_path = "participants.xlsx"
+    df = pd.read_excel(file_path)
 
+    # Créer un DataFrame temporaire pour stocker les scores et les chronomètres
+    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre"])
 
+    # Afficher l'image
+    st.image("palliers.png", use_column_width=True)
 
-# Créer une barre de navigation pour les onglets
-st.title("Quiz App - Générer 10 Questions")
-menu = ["Générateur", "Participants"]
-choice = st.sidebar.selectbox("Onglets", menu)
+    # Créer un onglet pour afficher les participants
+    with st.sidebar:
+        st.title("Filtres")
+        search_term = st.text_input("Rechercher par nom/prénom", "")
+        group_filter = st.selectbox("Filtrer par groupe", df['GROUPE'].unique())
+        tente_filter = st.selectbox("Filtrer par tente", df['TENTE'].unique())
 
-# Afficher le contenu correspondant à l'onglet sélectionné
-if choice == "Générateur":
-    st.write("Contenu de la page principale...")
-elif choice == "Participants":
-        participants_tab()
+    # Filtrer les données en fonction des filtres sélectionnés
+    filtered_df = df[(df['GROUPE'] == group_filter) & (df['TENTE'] == tente_filter)]
+    if search_term:
+        filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['NOM'].lower() or search_term.lower() in row['PRENOM'].lower(), axis=1)]
 
+    # Afficher les résultats dans le tableau avec des champs de saisie pour les scores et les chronomètres
+    for index, row in filtered_df.iterrows():
+        with st.expander(f"{row['NOM']} {row['PRENOM']}"):
+            score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
+            chronometer_input = st.number_input("Chronomètre (en minutes)", key=f"chronometer_{index}", value=scores_df.loc[index, "Chronomètre"] if not pd.isna(scores_df.loc[index, "Chronomètre"]) else 0)
+            scores_df.loc[index, "Score"] = score_input
+            scores_df.loc[index, "Chronomètre"] = chronometer_input
 
-# Filtre pour la tranche de questions à retirer
-range_filter = st.slider("Tranche de questions à retirer (de 1 à 99)", 1, 99, (1, 99))
+    # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
+    st.write("Informations du participant:")
+    clicked_index = st.write(filtered_df)
 
-# Filtres pour les questions spécifiques à inclure
-question1_filter = st.number_input("Question 1 à inclure (de 0 à 99)", min_value=0, max_value=99, step=1)
-question2_filter = st.number_input("Question 2 à inclure (de 0 à 99)", min_value=0, max_value=99, step=1)
-question3_filter = st.number_input("Question 3 à inclure (de 0 à 99)", min_value=0, max_value=99, step=1)
+    if clicked_index is not None:
+        selected_row = filtered_df.iloc[clicked_index]
+        st.write(f"Nom: {selected_row['NOM']}")
+        st.write(f"Prénom: {selected_row['PRENOM']}")
+        st.write(f"Groupe: {selected_row['GROUPE']}")
+        st.write(f"Palier: {selected_row['PALIER']}")
+        st.write(f"Tente: {selected_row['TENTE']}")
+        st.write(f"Score: {scores_df.loc[clicked_index, 'Score']}")
+        st.write(f"Chronomètre: {scores_df.loc[clicked_index, 'Chronomètre']} minutes")
 
-# Bouton pour générer les questions aléatoires
-if st.button("Générer"):
-    # Appliquer le filtre pour la tranche de questions à retirer
-    filtered_df = df[(df['Numéro'] < range_filter[0]) | (df['Numéro'] > range_filter[1])]
+    # Bouton de téléchargement du fichier CSV
+    st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
+    if st.button("Télécharger les résultats au format CSV"):
+        st.write("Téléchargement en cours...")
+        download_link = create_download_link(filtered_df, file_type='csv', file_name='resultats_participants.csv')
+        st.markdown(download_link, unsafe_allow_html=True)
 
-    # Inclure les questions spécifiques à inclure
-    questions_to_include = [question1_filter, question2_filter, question3_filter]
-    included_df = filtered_df[filtered_df['Numéro'].isin(questions_to_include)]
-
-    # Sélectionner les questions aléatoires nécessaires pour compléter la sélection
-    remaining_questions = 10 - included_df.shape[0]
-    random_questions = filtered_df[~filtered_df['Numéro'].isin(included_df['Numéro'])].sample(n=remaining_questions, random_state=42)
-
-    # Concaténer les questions sélectionnées
-    final_selected_questions = pd.concat([included_df, random_questions])
-
-    # Afficher le tableau résultant
-    st.write('<style>table { table-layout: fixed; }</style>', unsafe_allow_html=True)
-    st.write('<style>th, td { word-wrap: break-word; }</style>', unsafe_allow_html=True)
-    st.write(final_selected_questions[['Numéro', 'Question', 'Réponse']].to_html(escape=False), unsafe_allow_html=True)
-else:
-    # Afficher le tableau complet si le bouton n'a pas encore été cliqué
-    st.write('<style>table { table-layout: fixed; }</style>', unsafe_allow_html=True)
-    st.write('<style>th, td { word-wrap: break-word; }</style>', unsafe_allow_html=True)
-    st.write(df[['Numéro', 'Question', 'Réponse']].to_html(escape=False), unsafe_allow_html=True)
-
-
+def create_download_link(df, file_type, file_name):
+    if file_type == 'csv':
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # Encodage en base 64 pour la compatibilité avec HTML
+        href = f'<a href="data:file/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
+    elif file_type == 'xlsx':
+        xlsx = df.to_excel(index=False)
+        b64 = base64.b64encode(xlsx).decode()  # Encodage en base 64 pour la compatibilité avec HTML
+        href = f'<a href="data:file/xlsx;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
+    return href
