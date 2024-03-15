@@ -33,14 +33,14 @@ def participants_tab():
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            total_time_input = st.text_input("Temps total (mm:ss:SSS)", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else "", format='%M:%S.%f')
+            total_time_input = st.text_input("Temps total (mm:ss:SSS)", key=f"total_time_{index}", value=scores_df.loc[index, "Temps_total"] if not pd.isna(scores_df.loc[index, "Temps_total"]) else "", help="Entrez le temps total au format mm:ss.SSS")
             if total_time_input:
                 # Vérifier si le format du temps est valide
                 try:
                     pd.to_timedelta(total_time_input)  # Conversion en timedelta pour vérifier la validité du format
                     scores_df.loc[index, "Temps_total"] = total_time_input
                 except ValueError:
-                    st.warning("Veuillez saisir un temps valide au format mm:ss:SSS")
+                    st.warning("Veuillez saisir un temps valide au format mm:ss.SSS")
             else:
                 scores_df.loc[index, "Temps_total"] = ""
 
