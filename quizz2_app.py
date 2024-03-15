@@ -17,7 +17,6 @@ choice = st.sidebar.selectbox("Onglets", menu)
 if choice == "Générateur":
     st.write("Contenu de la page principale...")
 elif choice == "Participants":
-    with st.beta_container():
         participants_tab()
 
 
