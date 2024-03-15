@@ -37,7 +37,7 @@ def participants_tab():
             seconds_input = st.number_input("Secondes", key=f"seconds_{index}", value=0, min_value=0, max_value=59, step=1)
             milliseconds_input = st.number_input("Millisecondes", key=f"milliseconds_{index}", value=0, min_value=0, max_value=999, step=1)
             total_time_input = f"{minutes_input:02d}:{seconds_input:02d}:{milliseconds_input:03d}"
-            scores_df.loc[index, "Temps_total"] = total_time_input
+            scores_df.loc[index, "Score"] = score_input  # Mettre à jour la valeur du score
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
