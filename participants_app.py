@@ -68,4 +68,5 @@ def create_download_link(df, file_type, file_name):
     if file_type == 'csv':
         csv = df.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()  # Encodage en base 64 pour la compatibilité avec HTML
-        href = f'<a href="data
+        href = f'<a href="data:text/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
+    return href
