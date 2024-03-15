@@ -3,7 +3,7 @@ import pandas as pd
 
 def participants_tab():
     # Charger le fichier Excel contenant les participants
-    file_path = "data/participants.xlsx"
+    file_path = "participants.xlsx"
     df = pd.read_excel(file_path)
 
     # Créer un DataFrame temporaire pour stocker les scores et les chronomètres
