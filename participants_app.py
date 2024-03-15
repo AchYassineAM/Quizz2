@@ -35,7 +35,7 @@ def participants_tab():
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
-    selected_index = st.table_cursor_click_select(data=filtered_df)
+    selected_index = st.radio("Sélectionner un participant :", filtered_df.index)
 
     if clicked_index is not None:
         selected_row = filtered_df.iloc[clicked_index]
