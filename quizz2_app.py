@@ -15,9 +15,9 @@ menu = ["Générateur", "Score"]
 choice = st.sidebar.selectbox("Onglets", menu)
 
 # Afficher le contenu correspondant à l'onglet sélectionné
-if choice == "Page principale":
+if choice == "Générateur":
     st.write("Contenu de la page principale...")
-elif choice == "Participants":
+elif choice == "Score":
     participants_tab()
 
 
