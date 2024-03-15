@@ -1,12 +1,13 @@
 import streamlit as st
 import pandas as pd
+from participants_app import participants_tab
 
 # Charger le fichier Excel contenant les 99 questions et réponses
 file_path = "99Questions.xlsx"
 df = pd.read_excel(file_path)
 
 # Titre de l'application
-st.title("Quiz App")
+st.title("Quiz App - Générer 10 Questions")
 
 # Filtre pour la tranche de questions à retirer
 range_filter = st.slider("Tranche de questions à retirer (de 1 à 99)", 1, 99, (1, 99))
