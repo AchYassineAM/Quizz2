@@ -20,7 +20,7 @@ def participants_tab():
         group_filter = st.selectbox("Filtrer par groupe", df['GROUPE'].unique())
 
     # Filtrer les données en fonction des filtres sélectionnés
-    filtered_df = df[(df['GROUPE'] == group_filter) & (df['TENTE'] == tente_filter)]
+    filtered_df = df[(df['GROUPE'] == group_filter)]
     if search_term:
         filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['NOM'].lower() or search_term.lower() in row['PRENOM'].lower(), axis=1)]
 
