@@ -41,23 +41,16 @@ def participants_tab():
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
-    clicked_index = st.write(filtered_df)
-
-    if clicked_index is not None:
-        selected_row = filtered_df.iloc[clicked_index]
-        st.write(f"Nom: {selected_row['NOM']}")
-        st.write(f"Prénom: {selected_row['PRENOM']}")
-        st.write(f"Groupe: {selected_row['GROUPE']}")
-        st.write(f"Palier: {selected_row['PALIER']}")
-        st.write(f"Tente: {selected_row['TENTE']}")
-        st.write(f"Score: {selected_row['Score']}")
-        st.write(f"Temps total: {selected_row['Temps_total']}")
+    details_df = filtered_df.copy()  # Créer une copie du DataFrame filtré pour y ajouter les colonnes Score et Temps_total
+    details_df["Score"] = scores_df["Score"]
+    details_df["Temps_total"] = scores_df["Temps_total"]
+    clicked_index = st.write(details_df)
 
     # Bouton de téléchargement du fichier CSV
     st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
     if st.button("Télécharger les résultats au format CSV"):
         st.write("Téléchargement en cours...")
-        download_link = create_download_link(filtered_df, file_type='csv', file_name='resultats_participants.csv')
+        download_link = create_download_link(details_df, file_type='csv', file_name='resultats_participants.csv')
         st.markdown(download_link, unsafe_allow_html=True)
 
 def create_download_link(df, file_type, file_name):
