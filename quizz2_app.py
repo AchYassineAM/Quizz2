@@ -33,11 +33,13 @@ if st.button("Générer"):
     final_selected_questions = pd.concat([included_df, random_questions])
 
     # Afficher le tableau résultant
-    for index, row in final_selected_questions.iterrows():
-        st.write(f"Question {row['Numéro']}: {row['Question']}")
-        st.write(f"Réponse {row['Numéro']}: {row['Réponse']}")
+    st.write('<style>div.Widget.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
+    st.write('<style>table { table-layout: auto; }</style>', unsafe_allow_html=True)
+    st.write('<style>th { white-space: nowrap; }</style>', unsafe_allow_html=True)
+    st.write('<style>td { word-wrap: break-word; }</style>', unsafe_allow_html=True)
+    st.write('<style>td { max-width: 100px; }</style>', unsafe_allow_html=True)
+
+    st.write(final_selected_questions[['Numéro', 'Question', 'Réponse']])
 else:
     # Afficher le tableau complet si le bouton n'a pas encore été cliqué
-    for index, row in df.iterrows():
-        st.write(f"Question {row['Numéro']}: {row['Question']}")
-        st.write(f"Réponse {row['Numéro']}: {row['Réponse']}")
+    st.write(df[['Numéro', 'Question', 'Réponse']])
