@@ -6,8 +6,20 @@ from participants_app import participants_tab
 file_path = "99Questions.xlsx"
 df = pd.read_excel(file_path)
 
-# Titre de l'application
+
+
+# Créer une barre de navigation pour les onglets
 st.title("Quiz App - Générer 10 Questions")
+menu = ["Générateur", "Participants"]
+choice = st.sidebar.selectbox("Navigation", menu)
+
+# Afficher le contenu correspondant à l'onglet sélectionné
+if choice == "Générateur":
+    st.write("Contenu de la page principale...")
+elif choice == "Participants":
+    with st.beta_container():
+        participants_tab()
+
 
 # Filtre pour la tranche de questions à retirer
 range_filter = st.slider("Tranche de questions à retirer (de 1 à 99)", 1, 99, (1, 99))
@@ -43,8 +55,4 @@ else:
     st.write('<style>th, td { word-wrap: break-word; }</style>', unsafe_allow_html=True)
     st.write(df[['Numéro', 'Question', 'Réponse']].to_html(escape=False), unsafe_allow_html=True)
 
-
-
-# Ajouter l'onglet pour les participants
-participants_tab()
 
