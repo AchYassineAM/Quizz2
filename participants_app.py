@@ -37,9 +37,13 @@ def participants_tab():
             seconds_input = st.number_input("Secondes", key=f"chronometer_seconds_{index}", value=scores_df.loc[index, "Chronomètre_seconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_seconds"]) else 0, min_value=0, max_value=59, step=1)
             milliseconds_input = st.number_input("Millisecondes", key=f"chronometer_milliseconds_{index}", value=scores_df.loc[index, "Chronomètre_milliseconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_milliseconds"]) else 0, min_value=0, max_value=999, step=1)
             chronometer_input = minutes_input * 60 + seconds_input + milliseconds_input / 1000
+            scores_df.loc[index, "Score"] = score_input
             scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
             scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
             scores_df.loc[index, "Chronomètre_milliseconds"] = milliseconds_input
+
+    # Concaténer les scores avec les informations des participants filtrés
+    filtered_df = pd.concat([filtered_df, scores_df], axis=1)
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
@@ -52,8 +56,8 @@ def participants_tab():
         st.write(f"Groupe: {selected_row['GROUPE']}")
         st.write(f"Palier: {selected_row['PALIER']}")
         st.write(f"Tente: {selected_row['TENTE']}")
-        st.write(f"Score: {scores_df.loc[clicked_index, 'Score']}")
-        st.write(f"Chronomètre: {scores_df.loc[clicked_index, 'Chronomètre']} minutes")
+        st.write(f"Score: {selected_row['Score']}")
+        st.write(f"Chronomètre: {selected_row['Chronomètre_minutes']} minutes {selected_row['Chronomètre_seconds']} secondes {selected_row['Chronomètre_milliseconds']} millisecondes")
 
     # Bouton de téléchargement du fichier CSV
     st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
@@ -68,7 +72,4 @@ def create_download_link(df, file_type, file_name):
         b64 = base64.b64encode(csv.encode()).decode()  # Encodage en base 64 pour la compatibilité avec HTML
         href = f'<a href="data:file/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
     elif file_type == 'xlsx':
-        xlsx = df.to_excel(index=False)
-        b64 = base64.b64encode(xlsx).decode()  # Encodage en base 64 pour la compatibilité avec HTML
-        href = f'<a href="data:file/xlsx;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
-    return href
+        xlsx = df.to_excel(index
