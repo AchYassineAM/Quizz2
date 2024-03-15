@@ -44,6 +44,8 @@ def participants_tab():
                     scores_df.loc[index, "Temps_total"] = total_time_str
                 except ValueError:
                     st.warning("Veuillez saisir un temps valide au format mm:ss:SSS")
+            else:
+                scores_df.loc[index, "Temps_total"] = ""
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
