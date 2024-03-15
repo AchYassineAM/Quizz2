@@ -11,7 +11,7 @@ df = pd.read_excel(file_path)
 # Créer une barre de navigation pour les onglets
 st.title("Quiz App - Générer 10 Questions")
 menu = ["Générateur", "Participants"]
-choice = st.sidebar.selectbox("Navigation", menu)
+choice = st.sidebar.selectbox("Onglets", menu)
 
 # Afficher le contenu correspondant à l'onglet sélectionné
 if choice == "Générateur":
