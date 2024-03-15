@@ -9,9 +9,6 @@ df = pd.read_excel(file_path)
 # Titre de l'application
 st.title("Quiz App - Générer 10 Questions")
 
-# Ajouter l'onglet pour les participants
-participants_tab()
-
 # Filtre pour la tranche de questions à retirer
 range_filter = st.slider("Tranche de questions à retirer (de 1 à 99)", 1, 99, (1, 99))
 
@@ -45,3 +42,9 @@ else:
     st.write('<style>table { table-layout: fixed; }</style>', unsafe_allow_html=True)
     st.write('<style>th, td { word-wrap: break-word; }</style>', unsafe_allow_html=True)
     st.write(df[['Numéro', 'Question', 'Réponse']].to_html(escape=False), unsafe_allow_html=True)
+
+
+
+# Ajouter l'onglet pour les participants
+participants_tab()
+
