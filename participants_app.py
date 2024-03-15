@@ -16,16 +16,17 @@ def participants_tab():
     with st.sidebar:
         st.title("Filtres")
         search_term = st.text_input("Rechercher par nom/prénom", "")
-        group_filter = st.selectbox("Filtrer par groupe", df['Groupe'].unique())
+        group_filter = st.selectbox("Filtrer par groupe", df['GROUPE'].unique())
+        tente_filter = st.selectbox("Filtrer par tente", df['TENTE'].unique())
 
     # Filtrer les données en fonction des filtres sélectionnés
-    filtered_df = df[df['Groupe'] == group_filter]
+    filtered_df = df[(df['GROUPE'] == group_filter) & (df['TENTE'] == tente_filter)]
     if search_term:
-        filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['Nom'].lower() or search_term.lower() in row['Prénom'].lower(), axis=1)]
+        filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['NOM'].lower() or search_term.lower() in row['PRENOM'].lower(), axis=1)]
 
     # Afficher les résultats dans le tableau avec des champs de saisie pour les scores et les chronomètres
     for index, row in filtered_df.iterrows():
-        with st.beta_expander(f"{row['Nom']} {row['Prénom']}"):
+        with st.beta_expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
             chronometer_input = st.number_input("Chronomètre (en minutes)", key=f"chronometer_{index}", value=scores_df.loc[index, "Chronomètre"] if not pd.isna(scores_df.loc[index, "Chronomètre"]) else 0)
             scores_df.loc[index, "Score"] = score_input
@@ -36,10 +37,11 @@ def participants_tab():
     if selected_index is not None:
         selected_row = filtered_df.iloc[selected_index]
         st.write("Informations du participant:")
-        st.write(f"Nom: {selected_row['Nom']}")
-        st.write(f"Prénom: {selected_row['Prénom']}")
-        st.write(f"Groupe: {selected_row['Groupe']}")
-        st.write(f"Palier: {selected_row['Palier']}")
+        st.write(f"Nom: {selected_row['NOM']}")
+        st.write(f"Prénom: {selected_row['PRENOM']}")
+        st.write(f"Groupe: {selected_row['GROUPE']}")
+        st.write(f"Palier: {selected_row['PALIER']}")
+        st.write(f"Tente: {selected_row['TENTE']}")
         st.write(f"Score: {scores_df.loc[selected_index, 'Score']}")
         st.write(f"Chronomètre: {scores_df.loc[selected_index, 'Chronomètre']} minutes")
 
@@ -47,7 +49,7 @@ def participants_tab():
     st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
     if st.button("Télécharger les résultats au format CSV"):
         st.write("Téléchargement en cours...")
-        download_link = create_download_link(scores_df, file_type='csv', file_name='resultats_participants.csv')
+        download_link = create_download_link(filtered_df, file_type='csv', file_name='resultats_participants.csv')
         st.markdown(download_link, unsafe_allow_html=True)
 
 def create_download_link(df, file_type, file_name):
