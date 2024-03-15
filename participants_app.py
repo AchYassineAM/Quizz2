@@ -66,6 +66,4 @@ def create_download_link(df, file_type, file_name):
         href = f'<a href="data:file/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
     elif file_type == 'xlsx':
         xlsx = df.to_excel(index=False)
-        b64 = base64.b64encode(xlsx).decode()  # Encodage en base 64 pour la compatibilité avec HTML
-        href = f'<a href="data:file/xlsx;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
-    return href
+        b64 = base64.b64encode(xlsx).decode
