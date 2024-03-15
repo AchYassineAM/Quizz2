@@ -7,8 +7,8 @@ def participants_tab():
     file_path = "participants.xlsx"
     df = pd.read_excel(file_path)
 
-    # Créer un DataFrame temporaire pour stocker les scores et les chronomètres
-    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Chronomètre_minutes", "Chronomètre_seconds", "Chronomètre_milliseconds"])
+    # Créer un DataFrame temporaire pour stocker les scores et le temps total
+    scores_df = pd.DataFrame(index=df.index, columns=["Score", "Temps_total"])
 
     # Afficher l'image
     st.image("palliers.png", use_column_width=True)
@@ -29,21 +29,19 @@ def participants_tab():
     if search_term:
         filtered_df = filtered_df[filtered_df.apply(lambda row: search_term.lower() in row['NOM'].lower() or search_term.lower() in row['PRENOM'].lower(), axis=1)]
 
-    # Afficher les résultats dans le tableau avec des champs de saisie pour les scores et les chronomètres
+    # Afficher les résultats dans le tableau avec des champs de saisie pour les scores et le temps total
     for index, row in filtered_df.iterrows():
         with st.expander(f"{row['NOM']} {row['PRENOM']}"):
             score_input = st.number_input("Score", key=f"score_{index}", value=scores_df.loc[index, "Score"] if not pd.isna(scores_df.loc[index, "Score"]) else 0)
-            minutes_input = st.number_input("Minutes", key=f"chronometer_minutes_{index}", value=scores_df.loc[index, "Chronomètre_minutes"] if not pd.isna(scores_df.loc[index, "Chronomètre_minutes"]) else 0)
-            seconds_input = st.number_input("Secondes", key=f"chronometer_seconds_{index}", value=scores_df.loc[index, "Chronomètre_seconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_seconds"]) else 0, min_value=0, max_value=59, step=1)
-            milliseconds_input = st.number_input("Millisecondes", key=f"chronometer_milliseconds_{index}", value=scores_df.loc[index, "Chronomètre_milliseconds"] if not pd.isna(scores_df.loc[index, "Chronomètre_milliseconds"]) else 0, min_value=0, max_value=999, step=1)
-            chronometer_input = minutes_input * 60 + seconds_input + milliseconds_input / 1000
+            minutes_input = st.number_input("Minutes", key=f"minutes_{index}", value=scores_df.loc[index, "Minutes"] if not pd.isna(scores_df.loc[index, "Minutes"]) else 0)
+            seconds_input = st.number_input("Secondes", key=f"seconds_{index}", value=scores_df.loc[index, "Secondes"] if not pd.isna(scores_df.loc[index, "Secondes"]) else 0, min_value=0, max_value=59, step=1)
+            milliseconds_input = st.number_input("Millisecondes", key=f"milliseconds_{index}", value=scores_df.loc[index, "Milliseconds"] if not pd.isna(scores_df.loc[index, "Milliseconds"]) else 0, min_value=0, max_value=999, step=1)
+            total_time = minutes_input * 60000 + seconds_input * 1000 + milliseconds_input
             scores_df.loc[index, "Score"] = score_input
-            scores_df.loc[index, "Chronomètre_minutes"] = minutes_input
-            scores_df.loc[index, "Chronomètre_seconds"] = seconds_input
-            scores_df.loc[index, "Chronomètre_milliseconds"] = milliseconds_input
+            scores_df.loc[index, "Temps_total"] = total_time
 
-    # Concaténer les scores avec les informations des participants filtrés
-    filtered_df = pd.concat([filtered_df, scores_df], axis=1)
+    # Ajouter une colonne Temps_total_format pour afficher le temps total dans le format souhaité
+    filtered_df['Temps_total_format'] = filtered_df['Temps_total'].apply(lambda x: pd.to_datetime(x, unit='ms').strftime('%M:%S.%f')[:-3])
 
     # Afficher les informations détaillées lorsque l'utilisateur sélectionne un participant
     st.write("Informations du participant:")
@@ -57,7 +55,7 @@ def participants_tab():
         st.write(f"Palier: {selected_row['PALIER']}")
         st.write(f"Tente: {selected_row['TENTE']}")
         st.write(f"Score: {selected_row['Score']}")
-        st.write(f"Chronomètre: {selected_row['Chronomètre_minutes']} minutes {selected_row['Chronomètre_seconds']} secondes {selected_row['Chronomètre_milliseconds']} millisecondes")
+        st.write(f"Temps total: {selected_row['Temps_total_format']}")
 
     # Bouton de téléchargement du fichier CSV
     st.write("")  # Ajouter un espace entre le tableau et le bouton de téléchargement
@@ -70,9 +68,4 @@ def create_download_link(df, file_type, file_name):
     if file_type == 'csv':
         csv = df.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()  # Encodage en base 64 pour la compatibilité avec HTML
-        href = f'<a href="data:file/csv;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
-    elif file_type == 'xlsx':
-        xlsx = df.to_excel(index=False)
-        b64 = base64.b64encode(xlsx).decode()  # Encodage en base 64 pour la compatibilité avec HTML
-        href = f'<a href="data:file/xlsx;base64,{b64}" download="{file_name}">Cliquez ici pour télécharger</a>'
-    return href
+        href = f'<a href="data
