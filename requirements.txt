@@ -2,5 +2,5 @@ openpyxl
 streamlit
 pandas
 numpy
-mariadb==10.11.6
+mariadb==1.1.10
 SQLAlchemy==1.4.27
