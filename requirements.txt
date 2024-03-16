@@ -2,5 +2,5 @@ openpyxl
 streamlit
 pandas
 numpy
-mysqlclient==2.1.0
+Mariadb 10.11.6
 SQLAlchemy>=1.4.27
