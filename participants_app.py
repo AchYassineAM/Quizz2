@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import base64
 
+# Initialize connection with database
+conn = st.connection('mysql', type='sql')
+
 def participants_tab():
     # Charger le fichier Excel contenant les participants
     file_path = "participants.xlsx"
