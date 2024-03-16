@@ -8,6 +8,8 @@ from participants_app import participants_tab
 file_path = "99Questions.xlsx"
 df = pd.read_excel(file_path)
 
+# Initialize connection with database
+conn = st.connection('mysql', type='sql')
 
 # Créer une barre de navigation pour les onglets
 st.title("Quizz - Générer 10 questions")
